@@ -1,9 +1,9 @@
 language: csharp
 sudo: required
 dist: trusty
-mono: 4.2.3
+mono: latest
 os: linux
-dotnet: 1.0.0-preview2-003121
+dotnet: 1.0.0-preview2-003131
 services: docker
 addons:
   apt:
@@ -16,8 +16,7 @@ addons:
     - zlib1g
     - python-pip
 before_install:
-  - sudo pip install awscli 
-  - if test "$TRAVIS_OS_NAME" == "osx"; then brew update; brew install icu4c; brew install openssl; ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/; ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/; fi
+  - sudo pip install awscli
 branches:
   only:
     - master
@@ -25,8 +24,6 @@ script:
   # Get the last version of dotnet core and build project
   - dotnet restore
   - dotnet publish netcorebuild
-
-  - echo $TRAVIS_OS_NAME
 
   ## PUSH into ECR
   - aws --version
