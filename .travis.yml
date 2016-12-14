@@ -25,31 +25,27 @@ dotnet: 1.0.0-preview2-003121
 services:
     - docker
 script:
-  # Get the last versiob of dotnet core and build project
+  # Get the last version of dotnet core and build project
   - dotnet restore
-  - dotnet publish Marketplace.Mobile.Api
+  - dotnet publish netcorebuild
 
   ## PUSH into ECR
   - aws --version
-  - aws sts get-caller-identity
-  - eval $(aws ecr get-login)
+  #- aws sts get-caller-identity
+  #- eval $(aws ecr get-login)
   #build the image
-  - docker build --no-cache -t $PROJECT_DOCKER_REPOSITORY:$COMMIT .
+  #- docker build --no-cache -t $PROJECT_DOCKER_REPOSITORY:$COMMIT .
   #tag the build
-  - docker tag $PROJECT_DOCKER_REPOSITORY:$COMMIT $AWS_DOCKER_REPOSITORY/$PROJECT_DOCKER_REPOSITORY:$COMMIT
+  #- docker tag $PROJECT_DOCKER_REPOSITORY:$COMMIT $AWS_DOCKER_REPOSITORY/$PROJECT_DOCKER_REPOSITORY:$COMMIT
   #push the image to the repository
-  - docker push $AWS_DOCKER_REPOSITORY/$PROJECT_DOCKER_REPOSITORY:$COMMIT
+  #- docker push $AWS_DOCKER_REPOSITORY/$PROJECT_DOCKER_REPOSITORY:$COMMIT
   
-env:
-  global:
-    - CLI_VERSION=latest
-    - COMMIT=${TRAVIS_COMMIT::8}
+#env:
+#  global:
+#    - CLI_VERSION=latest
+#    - COMMIT=${TRAVIS_COMMIT::8}
 
-before_deploy:
-  - sed -i "s/:latest/:$COMMIT/g" Dockerrun.aws.json
-  - zip $AWS_APP-$COMMIT.zip Dockerrun.aws.json 
-
-deploy:
-  provider: script
-  script: aws s3 cp $AWS_APP-$COMMIT.zip s3://devops-ci-preprod-packages-ricardo/octopus/ --metadata project=$AWS_APP,package-name=$AWS_APP,commit=$COMMIT,build-number=$TRAVIS_BUILD_NUMBER
-  skip_cleanup: true
+#deploy:
+#  provider: script
+#  script: aws s3 cp $AWS_APP-$COMMIT.zip s3://devops-ci-preprod-packages-ricardo/octopus/ --metadata project=$AWS_APP,package-name=$AWS_APP,commit=$COMMIT,build-number=$TRAVIS_BUILD_NUMBER
+#  skip_cleanup: true
