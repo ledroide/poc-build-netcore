@@ -1,0 +1,55 @@
+language: csharp
+sudo: required
+dist: trusty
+addons:
+  apt:
+    packages:
+    - gettext
+    - libcurl4-openssl-dev
+    - libicu-dev
+    - libssl-dev
+    - libunwind8
+    - zlib1g
+    - python-pip
+before_install:
+  - sudo pip install awscli 
+  - if test "$TRAVIS_OS_NAME" == "osx"; then brew update; brew install icu4c; brew install openssl; ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/; ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/; fi
+mono:
+  - 4.2.3
+os:
+  - linux
+branches:
+  only:
+    - master
+dotnet: 1.0.0-preview2-003121
+services:
+    - docker
+script:
+  # Get the last versiob of dotnet core and build project
+  - dotnet restore
+  - dotnet publish Marketplace.Mobile.Api
+
+  ## PUSH into ECR
+  - aws --version
+  - aws sts get-caller-identity
+  - eval $(aws ecr get-login)
+  #build the image
+  - docker build --no-cache -t $PROJECT_DOCKER_REPOSITORY:$COMMIT .
+  #tag the build
+  - docker tag $PROJECT_DOCKER_REPOSITORY:$COMMIT $AWS_DOCKER_REPOSITORY/$PROJECT_DOCKER_REPOSITORY:$COMMIT
+  #push the image to the repository
+  - docker push $AWS_DOCKER_REPOSITORY/$PROJECT_DOCKER_REPOSITORY:$COMMIT
+  
+env:
+  global:
+    - CLI_VERSION=latest
+    - COMMIT=${TRAVIS_COMMIT::8}
+
+before_deploy:
+  - sed -i "s/:latest/:$COMMIT/g" Dockerrun.aws.json
+  - zip $AWS_APP-$COMMIT.zip Dockerrun.aws.json 
+
+deploy:
+  provider: script
+  script: aws s3 cp $AWS_APP-$COMMIT.zip s3://devops-ci-preprod-packages-ricardo/octopus/ --metadata project=$AWS_APP,package-name=$AWS_APP,commit=$COMMIT,build-number=$TRAVIS_BUILD_NUMBER
+  skip_cleanup: true
