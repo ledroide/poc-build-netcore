@@ -26,6 +26,8 @@ script:
   - dotnet restore
   - dotnet publish netcorebuild
 
+  echo $TRAVIS_OS_NAME
+
   ## PUSH into ECR
   - aws --version
   - aws sts get-caller-identity
@@ -36,13 +38,3 @@ script:
   - docker tag netcorebuild_app:latest $AWS_USER_NAME.dkr.ecr.eu-west-1.amazonaws.com/pe/demo:latest
   #push the image to the repository
   - docker push $AWS_USER_NAME.dkr.ecr.eu-west-1.amazonaws.com/pe/demo:latest
-  
-#env:
-#  global:
-#    - CLI_VERSION=latest
-#    - COMMIT=${TRAVIS_COMMIT::8}
-
-#deploy:
-#  provider: script
-#  script: aws s3 cp $AWS_APP-$COMMIT.zip s3://devops-ci-preprod-packages-ricardo/octopus/ --metadata project=$AWS_APP,package-name=$AWS_APP,commit=$COMMIT,build-number=$TRAVIS_BUILD_NUMBER
-#  skip_cleanup: true
