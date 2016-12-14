@@ -29,7 +29,7 @@ script:
   ## PUSH into ECR
   - aws --version
   - aws sts get-caller-identity
-  - eval $(aws ecr get-login)
+  - eval $(aws ecr get-login --region eu-west-1)
   #build the image
   - docker build --no-cache -t netcorebuild.app .
   #push the image to the repository
