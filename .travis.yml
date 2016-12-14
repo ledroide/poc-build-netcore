@@ -33,9 +33,9 @@ script:
   #build the image
   - docker build --no-cache -t netcorebuild_app .
   #tag the image
-  - docker tag netcorebuild_app:latest $AWS_USER_NAME.dkr.ecr.eu-west-1.amazonaws.com/netcorebuild_app:latest
+  - docker tag netcorebuild_app:latest $AWS_USER_NAME.dkr.ecr.eu-west-1.amazonaws.com/pe/demo:latest
   #push the image to the repository
-  - docker push $AWS_USER_NAME.dkr.ecr.eu-west-1.amazonaws.com/netcorebuild_app:latest
+  - docker push $AWS_USER_NAME.dkr.ecr.eu-west-1.amazonaws.com/pe/demo:latest
   
 #env:
 #  global:
