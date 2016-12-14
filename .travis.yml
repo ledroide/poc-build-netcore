@@ -28,12 +28,10 @@ script:
 
   ## PUSH into ECR
   - aws --version
-  #- aws sts get-caller-identity
-  #- eval $(aws ecr get-login)
+  - aws sts get-caller-identity
+  - eval $(aws ecr get-login)
   #build the image
-  #- docker build --no-cache -t $PROJECT_DOCKER_REPOSITORY:$COMMIT .
-  #tag the build
-  #- docker tag $PROJECT_DOCKER_REPOSITORY:$COMMIT $AWS_DOCKER_REPOSITORY/$PROJECT_DOCKER_REPOSITORY:$COMMIT
+  - docker build --no-cache -t netcorebuild.app .
   #push the image to the repository
   #- docker push $AWS_DOCKER_REPOSITORY/$PROJECT_DOCKER_REPOSITORY:$COMMIT
   
