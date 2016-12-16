@@ -1,4 +1,4 @@
-language: csharp
+language: go
 sudo: required
 dist: trusty
 mono: latest
