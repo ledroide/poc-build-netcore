@@ -9,7 +9,7 @@ namespace netcorebuild.Controllers
         [HttpGet]
         public string Get()
         {
-            return "Hello world";
+            return "Hello world demo";
         }
     }
 }
